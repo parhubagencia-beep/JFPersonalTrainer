@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JF Training · Personal</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root[data-theme="dark"]{
+  --bg:#0a0a0a; --surface:#141414; --surface-2:#1c1c1c; --border:#2a2a2a;
+  --border-strong:#3a3a3a; --text:#f2f1ed; --text-muted:#8c8a85; --text-dim:#59564f;
+  --accent:#e0242f; --accent-2:#ff4d56; --accent-dim:#7a0e14; --accent-soft:rgba(224,36,47,0.14);
+  --success:#3fa34d; --success-soft:rgba(63,163,77,0.14); --warning:#d98e23;
+  --warning-soft:rgba(217,142,35,0.14); --shadow: 0 8px 24px rgba(0,0,0,0.45);
+}
+:root[data-theme="light"]{
+  --bg:#f1efe9; --surface:#ffffff; --surface-2:#f7f5f0; --border:#dbd7cd;
+  --border-strong:#c3beb1; --text:#161513; --text-muted:#6b675f; --text-dim:#a29d90;
+  --accent:#d81b26; --accent-2:#b3121b; --accent-dim:#f3c4c6; --accent-soft:rgba(216,27,38,0.08);
+  --success:#227a37; --success-soft:rgba(34,122,55,0.10); --warning:#a8660f;
+  --warning-soft:rgba(168,102,15,0.10); --shadow: 0 8px 24px rgba(20,15,10,0.08);
+}
+html,body{ height:100%; }
+body{
+  background:var(--bg); color:var(--text);
+  font-family:'Inter',sans-serif; min-height:100vh; transition:background .2s, color .2s;
+}
+.mono{ font-family:'JetBrains Mono',monospace; }
+.eyebrow{
+  font-family:'Oswald',sans-serif; font-weight:600; letter-spacing:.14em;
+  text-transform:uppercase; font-size:11px; color:var(--text-muted);
+}
+h1,h2,h3,.h-brand{ font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:.02em; }
+.cut{ clip-path: polygon(16px 0, 100% 0, 100% 100%, 0 100%, 0 16px); }
+.shell{ display:flex; min-height:100vh; }
+.sidebar{
+  width:230px; flex-shrink:0; background:var(--surface);
+  border-right:1px solid var(--border); display:flex; flex-direction:column;
+  position:fixed; top:0; left:0; bottom:0; z-index:40;
+}
+.brand{
+  padding:26px 22px 22px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:10px;
+}
+.brand-mark{
+  width:38px; height:38px;
+  background:linear-gradient(135deg, var(--accent-2), var(--accent-dim));
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Oswald',sans-serif; font-weight:700; font-size:16px; color:#fff;
+  clip-path: polygon(8px 0, 100% 0, 100% 100%, 0 100%, 0 8px);
+  flex-shrink:0;
+}
+.brand-name{ font-family:'Oswald',sans-serif; font-weight:700; font-size:15px; letter-spacing:.06em; line-height:1.1; }
+.brand-sub{ font-size:10px; color:var(--text-muted); letter-spacing:.1em; text-transform:uppercase; margin-top:2px; }
+.nav{ flex:1; padding:18px 12px; display:flex; flex-direction:column; gap:4px; }
+.nav-item{
+  display:flex; align-items:center; gap:12px; padding:11px 12px;
+  color:var(--text-muted); text-decoration:none;
+  font-family:'Oswald',sans-serif; font-weight:500; font-size:13px;
+  letter-spacing:.06em; text-transform:uppercase;
+  border-left:2px solid transparent; cursor:pointer;
+  transition:all .15s ease; background:transparent;
+  border-top:none; border-right:none; border-bottom:none;
+}
+.nav-item svg{ width:17px; height:17px; flex-shrink:0; }
+.nav-item:hover{ color:var(--text); background:var(--surface-2); }
+.nav-item.active{ color:var(--text); border-left:2px solid var(--accent); background:var(--accent-soft); }
+.sidebar-foot{ padding:14px 12px 18px; border-top:1px solid var(--border); display:flex; flex-direction:column; gap:8px; }
+.theme-toggle{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:9px 12px; border:1px solid var(--border); background:var(--surface-2);
+  cursor:pointer; font-family:'Oswald',sans-serif; font-size:11px;
+  letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted);
+}
+.theme-toggle svg{ width:15px; height:15px; }
+.theme-track{ width:34px; height:18px; background:var(--border); position:relative; flex-shrink:0; }
+.theme-thumb{
+  position:absolute; top:2px; left:2px; width:14px; height:14px;
+  background:var(--accent); transition:left .18s ease;
+}
+:root[data-theme="dark"] .theme-thumb{ left:18px; }
+.main{ margin-left:230px; flex:1; min-width:0; padding-bottom:60px; }
+.topbar{
+  display:none; align-items:center; justify-content:space-between;
+  padding:16px 18px; border-bottom:1px solid var(--border);
+  background:var(--surface); position:sticky; top:0; z-index:30;
+}
+.page-head{
+  padding:34px 40px 22px; border-bottom:1px solid var(--border);
+  display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap;
+}
+.page-title{ font-size:28px; font-weight:700; margin-top:6px; }
+.page-body{ padding:32px 40px 60px; }
+.mobile-tabbar{
+  display:none; position:fixed; bottom:0; left:0; right:0;
+  background:var(--surface); border-top:1px solid var(--border);
+  z-index:50; padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+}
+.mobile-tabbar-inner{ display:flex; }
+.mobile-tab{
+  flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:6px 2px; color:var(--text-muted); text-decoration:none;
+  font-family:'Oswald',sans-serif; font-size:9.5px; letter-spacing:.05em;
+  text-transform:uppercase; background:none; border:none; cursor:pointer;
+}
+.mobile-tab svg{ width:19px; height:19px; }
+.mobile-tab.active{ color:var(--accent); }
+.btn{
+  font-family:'Oswald',sans-serif; font-weight:600; font-size:12.5px;
+  letter-spacing:.06em; text-transform:uppercase;
+  padding:11px 20px; border:1px solid transparent; cursor:pointer;
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  transition:all .15s ease; white-space:nowrap;
+}
+.btn svg{ width:15px; height:15px; }
+.btn-primary{
+  background:linear-gradient(135deg, var(--accent-2), var(--accent-dim) 130%);
+  color:#fff; clip-path: polygon(9px 0, 100% 0, 100% 100%, 0 100%, 0 9px);
+}
+.btn-primary:hover{ filter:brightness(1.12); }
+.btn-outline{
+  background:transparent; color:var(--text); border-color:var(--border-strong);
+}
+.btn-outline:hover{ background:var(--surface-2); border-color:var(--text-muted); }
+.btn-danger{
+  background:transparent; color:var(--accent); border-color:var(--accent-dim);
+}
+.btn-danger:hover{ background:var(--accent-soft); }
+.btn-sm{ padding:7px 13px; font-size:11px; }
+.btn-success{
+  background:var(--success); color:#fff; border-color:var(--success);
+}
+.btn-success:hover{ filter:brightness(1.1); }
+.card{
+  background:var(--surface); border:1px solid var(--border); padding:20px;
+}
+.kpi-card{
+  background:var(--surface); border:1px solid var(--border);
+  padding:18px 20px; clip-path: polygon(12px 0, 100% 0, 100% 100%, 0 100%, 0 12px);
+  position:relative; overflow:hidden;
+}
+.kpi-card::before{
+  content:''; position:absolute; top:0; left:0; width:12px; height:12px;
+  background:var(--accent);
+}
+.kpi-label{ font-family:'Oswald',sans-serif; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted); }
+.kpi-value{ font-family:'JetBrains Mono',monospace; font-size:27px; font-weight:600; margin-top:8px; letter-spacing:-0.01em; }
+.kpi-delta{ font-family:'JetBrains Mono',monospace; font-size:11.5px; margin-top:6px; }
+.up{ color:var(--success); } .down{ color:var(--accent); }
+.grid{ display:grid; gap:16px; }
+.grid-4{ grid-template-columns:repeat(4,1fr); }
+.grid-2{ grid-template-columns:2fr 1fr; }
+.section-title{
+  font-family:'Oswald',sans-serif; font-weight:600; font-size:13px;
+  letter-spacing:.08em; text-transform:uppercase;
+  display:flex; align-items:center; gap:10px; margin-bottom:14px;
+}
+.section-title::after{ content:''; flex:1; height:1px; background:var(--border); }
+.badge{
+  font-family:'Oswald',sans-serif; font-size:10.5px; letter-spacing:.06em;
+  text-transform:uppercase; padding:4px 9px; border:1px solid;
+  display:inline-flex; align-items:center; gap:5px;
+}
+.badge::before{ content:''; width:6px; height:6px; }
+.badge-ok{ color:var(--success); border-color:var(--success); background:var(--success-soft); }
+.badge-ok::before{ background:var(--success); }
+.badge-off{ color:var(--text-muted); border-color:var(--border-strong); background:var(--surface-2); }
+.badge-off::before{ background:var(--text-dim); }
+.badge-warn{ color:var(--warning); border-color:var(--warning); background:var(--warning-soft); }
+.badge-warn::before{ background:var(--warning); }
+.badge-late{ color:var(--accent); border-color:var(--accent); background:var(--accent-soft); }
+.badge-late::before{ background:var(--accent); }
+.row-list{ border:1px solid var(--border); }
+.row-list .row{
+  display:flex; align-items:center; gap:14px; padding:14px 18px;
+  border-bottom:1px solid var(--border); cursor:pointer;
+  background:var(--surface); transition:background .12s ease;
+}
+.row-list .row:last-child{ border-bottom:none; }
+.row-list .row:hover{ background:var(--surface-2); }
+.avatar{
+  width:38px; height:38px; flex-shrink:0;
+  background:var(--surface-2); border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Oswald',sans-serif; font-weight:600; font-size:13px; color:var(--text-muted);
+}
+.row-name{ font-weight:600; font-size:14px; }
+.row-sub{ font-size:12px; color:var(--text-muted); margin-top:2px; }
+.row-right{ margin-left:auto; display:flex; align-items:center; gap:14px; }
+.chev{ width:16px; height:16px; color:var(--text-dim); flex-shrink:0; }
+.field{ display:flex; flex-direction:column; gap:6px; }
+.field label{ font-family:'Oswald',sans-serif; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); }
+.field input, .field select, .field textarea{
+  background:var(--surface-2); border:1px solid var(--border);
+  color:var(--text); padding:10px 12px;
+  font-family:'Inter',sans-serif; font-size:13.5px; outline:none;
+}
+.field input:focus, .field select:focus, .field textarea:focus{ border-color:var(--accent); }
+.field input:disabled{ color:var(--text-muted); background:transparent; border-color:transparent; padding-left:0; }
+.search-bar{ position:relative; }
+.search-bar svg{ position:absolute; left:12px; top:50%; transform:translateY(-50%); width:15px; height:15px; color:var(--text-muted); }
+.search-bar input{ padding-left:36px; width:100%; }
+.chips{ display:flex; gap:8px; flex-wrap:wrap; }
+.chip{
+  font-family:'Oswald',sans-serif; font-size:11px; letter-spacing:.06em;
+  text-transform:uppercase; padding:7px 13px; border:1px solid var(--border-strong);
+  color:var(--text-muted); cursor:pointer; background:transparent;
+}
+.chip:hover{ color:var(--text); }
+.chip.active{ color:#fff; background:var(--accent); border-color:var(--accent); }
+.overlay{
+  position:fixed; inset:0; background:rgba(0,0,0,0.6);
+  display:none; align-items:center; justify-content:center; z-index:100; padding:16px;
+}
+.overlay.open{ display:flex; }
+.modal{
+  background:var(--surface); border:1px solid var(--border-strong);
+  width:100%; max-width:440px; max-height:88vh; overflow-y:auto;
+  clip-path: polygon(16px 0, 100% 0, 100% 100%, 0 100%, 0 16px);
+}
+.modal-head{ display:flex; align-items:center; justify-content:space-between; padding:18px 22px; border-bottom:1px solid var(--border); }
+.modal-head h3{ font-size:15px; }
+.modal-close{ background:none; border:none; color:var(--text-muted); cursor:pointer; width:22px; height:22px; }
+.modal-body{ padding:22px; display:flex; flex-direction:column; gap:14px; }
+.modal-foot{ padding:16px 22px 22px; display:flex; gap:10px; justify-content:flex-end; }
+.tabs{ display:flex; border-bottom:1px solid var(--border); gap:2px; overflow-x:auto; }
+.tab-btn{
+  font-family:'Oswald',sans-serif; font-size:12px; letter-spacing:.06em;
+  text-transform:uppercase; padding:12px 18px; color:var(--text-muted);
+  background:none; border:none; cursor:pointer;
+  border-bottom:2px solid transparent; white-space:nowrap; flex-shrink:0;
+}
+.tab-btn:hover{ color:var(--text); }
+.tab-btn.active{ color:var(--text); border-bottom-color:var(--accent); }
+.tab-panel{ display:none; padding-top:22px; }
+.tab-panel.active{ display:block; }
+.toast-wrap{
+  position:fixed; bottom:20px; right:20px; z-index:200;
+  display:flex; flex-direction:column; gap:8px;
+}
+.toast{
+  background:var(--surface); border:1px solid var(--border-strong);
+  border-left:3px solid var(--success); padding:12px 16px;
+  font-size:13px; box-shadow:var(--shadow); min-width:220px;
+  animation:slideIn .2s ease;
+}
+@keyframes slideIn{ from{ transform:translateX(20px); opacity:0; } to{ transform:translateX(0); opacity:1; } }
+::selection{ background:var(--accent); color:#fff; }
+a{ color:inherit; }
+.view{ display:none; }
+.view.active{ display:block; }
+.ficha-head{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+.ficha-avatar{ width:64px; height:64px; background:var(--surface-2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-family:'Oswald',sans-serif; font-weight:700; font-size:22px; color:var(--text-muted); flex-shrink:0; }
+.ficha-actions{ margin-left:auto; display:flex; gap:10px; flex-wrap:wrap; }
+.back-link{ display:inline-flex; align-items:center; gap:6px; color:var(--text-muted); text-decoration:none; font-family:'Oswald',sans-serif; font-size:12px; letter-spacing:.06em; text-transform:uppercase; cursor:pointer; background:none; border:none; margin-bottom:16px; }
+.back-link:hover{ color:var(--text); }
+.back-link svg{ width:15px;height:15px; }
+.workout-row{ display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border:1px solid var(--border); margin-bottom:8px; }
+.workout-row .row-name{ font-size:13.5px; }
+.evo-chart{ height:160px; display:flex; align-items:flex-end; gap:8px; padding:10px 4px; }
+.evo-bar{ flex:1; background:linear-gradient(180deg, var(--accent-2), var(--accent-dim)); position:relative; }
+.pill-row{ display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border); font-size:13.5px; }
+.pill-row:last-child{ border-bottom:none; }
+.sortable-item{ cursor:grab; }
+.sortable-item:active{ cursor:grabbing; }
+.sortable-ghost{ opacity:0.4; background:var(--accent-soft); }
+.notification-banner{
+  background:var(--accent-soft); border:1px solid var(--accent);
+  padding:12px 18px; margin-bottom:16px;
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  font-size:13px;
+}
+.notification-banner i{ color:var(--accent); font-size:16px; }
+.login-container{
+  display:flex; align-items:center; justify-content:center;
+  min-height:100vh; padding:20px;
+}
+.login-box{
+  background:var(--surface); border:1px solid var(--border-strong);
+  padding:40px 36px; max-width:400px; width:100%;
+  clip-path: polygon(16px 0, 100% 0, 100% 100%, 0 100%, 0 16px);
+}
+.login-box .brand{ padding:0 0 20px 0; border-bottom:1px solid var(--border); justify-content:center; }
+.login-box .brand .brand-mark{ width:48px; height:48px; font-size:22px; }
+.login-box .brand .brand-name{ font-size:18px; }
+.login-box .field{ margin-bottom:16px; }
+.login-box .field input{ padding:12px 14px; font-size:15px; }
+.fin-toolbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:12px; }
+.period-select{ display:flex; align-items:center; gap:8px; }
+.pix-box{ background:var(--surface-2); border:1px solid var(--border); padding:16px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+.pix-box .pix-key{ font-family:'JetBrains Mono',monospace; font-size:16px; color:var(--text); }
+.timeline-item{ padding:10px 14px; border-left:2px solid var(--accent); margin-bottom:8px; background:var(--surface-2); }
+.timeline-item .date{ font-size:11px; color:var(--text-muted); font-family:'JetBrains Mono',monospace; }
+.timeline-item .note{ margin-top:4px; }
+.rpe-row{ display:flex; gap:8px; flex-wrap:wrap; margin:8px 0; }
+.rpe-btn{
+  width:36px; height:36px; border:2px solid var(--border-strong);
+  background:var(--surface-2); color:var(--text-muted);
+  font-family:'Oswald',sans-serif; font-weight:700; font-size:14px;
+  cursor:pointer; transition:all .15s ease;
+  display:flex; align-items:center; justify-content:center;
+}
+.rpe-btn:hover{ border-color:var(--text); }
+.rpe-btn.active{ border-color:var(--accent); background:var(--accent); color:#fff; }
+@media (max-width:880px){
+  .sidebar{ display:none; }
+  .main{ margin-left:0; padding-bottom:74px; }
+  .topbar{ display:flex; }
+  .mobile-tabbar{ display:block; }
+  .page-head{ padding:22px 18px 18px; }
+  .page-body{ padding:20px 18px 40px; }
+  .grid-4{ grid-template-columns:repeat(2,1fr); }
+  .grid-2{ grid-template-columns:1fr; }
+  .login-box{ padding:30px 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="login-screen" class="login-container">
+  <div class="login-box">
+    <div class="brand" style="justify-content:center; padding-bottom:24px;">
+      <div class="brand-mark">JF</div>
+      <div style="text-align:center;">
+        <div class="brand-name">JF TRAINING</div>
+        <div class="brand-sub">CRM Personal</div>
+      </div>
+    </div>
+    <div style="margin-bottom:20px; text-align:center; color:var(--text-muted); font-size:13px;">
+      <i class="fas fa-user-tie"></i> Área do Personal Trainer
+    </div>
+    <div class="field">
+      <label><i class="fas fa-envelope"></i> E-mail</label>
+      <input type="email" id="login-email" value="personal@jftraining.com" placeholder="personal@jftraining.com">
+    </div>
+    <div class="field">
+      <label><i class="fas fa-lock"></i> Senha</label>
+      <input type="password" id="login-senha" value="teste123" placeholder="••••••••">
+    </div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;">
+      <button class="btn btn-primary" style="flex:1;" onclick="doLoginPersonal()">
+        <i class="fas fa-sign-in-alt"></i> Entrar
+      </button>
+      <button class="btn btn-outline btn-sm" onclick="gerarSenhaMock()">
+        <i class="fas fa-key"></i> Gerar senha
+      </button>
+    </div>
+    <div style="margin-top:12px; font-size:12px; color:var(--text-muted); text-align:center;">
+      <i class="fas fa-info-circle"></i> personal@jftraining.com / teste123
+    </div>
+  </div>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="app-personal" style="display:none;">
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">JF</div>
+      <div><div class="brand-name">JF TRAINING</div><div class="brand-sub">CRM Personal</div></div>
+    </div>
+    <nav class="nav">
+      <button class="nav-item active" data-view="overview" onclick="goToView('overview')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Overview
+      </button>
+      <button class="nav-item" data-view="alunos" onclick="goToView('alunos')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6"/><circle cx="18" cy="9" r="2.4"/><path d="M15.5 14c2.9.2 5 2.3 5 6"/></svg>
+        Alunos
+      </button>
+      <button class="nav-item" data-view="financeiro" onclick="goToView('financeiro')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="5" width="19" height="14"/><circle cx="12" cy="12" r="3.2"/><path d="M2.5 9h2M19.5 9h2M2.5 15h2M19.5 15h2"/></svg>
+        Financeiro
+      </button>
+      <button class="nav-item" data-view="configuracoes" onclick="goToView('configuracoes')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1-1.6 1.7 1.7 0 00-1.9.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1 1.7 1.7 0 00-.3-1.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>
+        Configurações
+      </button>
+    </nav>
+    <div class="sidebar-foot">
+      <button class="theme-toggle" data-theme-toggle>
+        <span style="display:flex;align-items:center;gap:8px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          Tema
+        </span>
+        <span class="theme-track"><span class="theme-thumb"></span></span>
+      </button>
+      <button class="settings-link" onclick="doLogout()" style="background:none;border:none;cursor:pointer;width:100%;text-align:left;">
+        <i class="fas fa-sign-out-alt"></i> Sair
+      </button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:9px;">
+        <div class="brand-mark" style="width:30px;height:30px;font-size:12px;">JF</div>
+        <span class="brand-name" style="font-size:13px;">JF TRAINING</span>
+      </div>
+      <button class="theme-toggle" data-theme-toggle style="padding:6px 8px;">
+        <span class="theme-track"><span class="theme-thumb"></span></span>
+      </button>
+    </div>
+
+    <!-- ===== OVERVIEW ===== -->
+    <div class="view active" id="view-overview">
+      <div class="page-head">
+        <div><span class="eyebrow">Painel geral</span><h1 class="page-title">Overview</h1></div>
+        <button class="btn btn-primary" onclick="showToast('Modal de novo aluno aberto')">
+          <i class="fas fa-plus"></i> Novo aluno
+        </button>
+      </div>
+      <div class="page-body">
+        <div class="notification-banner">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span><strong>⚠️ Atenção:</strong> Diego Azevedo não treina há 5 dias. Mariana Souza está com pagamento atrasado.</span>
+        </div>
+        <div class="grid grid-4">
+          <div class="kpi-card">
+            <div class="kpi-label">Alunos ativos</div>
+            <div class="kpi-value">42</div>
+            <div class="kpi-delta up"><i class="fas fa-arrow-up"></i> +5 este mês</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Alunos inativos</div>
+            <div class="kpi-value">7</div>
+            <div class="kpi-delta down"><i class="fas fa-arrow-up"></i> +2 este mês</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Faturamento do mês</div>
+            <div class="kpi-value">R$ 12.480</div>
+            <div class="kpi-delta up"><i class="fas fa-arrow-up"></i> 8% vs. mês ant.</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Pagamentos em atraso</div>
+            <div class="kpi-value">4</div>
+            <div class="kpi-delta down">R$ 1.120 pendentes</div>
+          </div>
+        </div>
+        <div style="height:24px;"></div>
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="section-title">Novos alunos por mês</div>
+            <div style="display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:12px;">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
+                <div style="width:100%;background:linear-gradient(180deg,var(--accent-2),var(--accent-dim));height:38%;"></div>
+                <span style="font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;">MAR</span>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
+                <div style="width:100%;background:linear-gradient(180deg,var(--accent-2),var(--accent-dim));height:52%;"></div>
+                <span style="font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;">ABR</span>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
+                <div style="width:100%;background:linear-gradient(180deg,var(--accent-2),var(--accent-dim));height:44%;"></div>
+                <span style="font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;">MAI</span>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
+                <div style="width:100%;background:linear-gradient(180deg,var(--accent-2),var(--accent-dim));height:70%;"></div>
+                <span style="font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;">JUN</span>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
+                <div style="width:100%;background:linear-gradient(180deg,var(--accent-2),var(--accent-dim));height:61%;"></div>
+                <span style="font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;">JUL</span>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
+                <div style="width:100%;background:linear-gradient(180deg,var(--accent-2),var(--accent-dim));height:88%;"></div>
+                <span style="font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;">AGO</span>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-title">Últimos atualizados</div>
+            <div class="row-list" style="border:none;">
+              <div class="row" style="padding:10px 0;cursor:pointer;" onclick="abrirFicha('Rafael Costa','RC')">
+                <div class="avatar">RC</div>
+                <div><div class="row-name" style="font-size:13px;">Rafael Costa</div><div class="row-sub">treino atualizado</div></div>
+                <i class="fas fa-chevron-right" style="color:var(--text-dim);margin-left:auto;"></i>
+              </div>
+              <div class="row" style="padding:10px 0;cursor:pointer;" onclick="abrirFicha('Bianca Moura','BM')">
+                <div class="avatar">BM</div>
+                <div><div class="row-name" style="font-size:13px;">Bianca Moura</div><div class="row-sub">pagamento confirmado</div></div>
+                <i class="fas fa-chevron-right" style="color:var(--text-dim);margin-left:auto;"></i>
+              </div>
+              <div class="row" style="padding:10px 0;cursor:pointer;" onclick="abrirFicha('Thiago Salles','TS')">
+                <div class="avatar">TS</div>
+                <div><div class="row-name" style="font-size:13px;">Thiago Salles</div><div class="row-sub">novo cadastro</div></div>
+                <i class="fas fa-chevron-right" style="color:var(--text-dim);margin-left:auto;"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ALUNOS ===== -->
+    <div class="view" id="view-alunos">
+      <div class="page-head">
+        <div><span class="eyebrow">Gestão de alunos</span><h1 class="page-title">Alunos</h1></div>
+        <button class="btn btn-primary" onclick="showToast('Modal de novo aluno aberto')">
+          <i class="fas fa-plus"></i> Novo aluno
+        </button>
+      </div>
+      <div class="page-body">
+        <div class="list-toolbar" style="display:flex;gap:12px;align-items:center;margin-bottom:18px;flex-wrap:wrap;">
+          <div class="search-bar" style="flex:1;min-width:200px;">
+            <i class="fas fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);"></i>
+            <input type="text" id="search-input" placeholder="Buscar por nome ou e-mail..." oninput="filterList()" style="padding-left:36px;width:100%;background:var(--surface-2);border:1px solid var(--border);color:var(--text);padding:10px 12px;font-family:'Inter',sans-serif;font-size:13.5px;outline:none;">
+          </div>
+          <div class="chips" id="filter-chips">
+            <button class="chip active" data-filter="todos" onclick="setFilter('todos')">Todos</button>
+            <button class="chip" data-filter="ativo" onclick="setFilter('ativo')">Ativos</button>
+            <button class="chip" data-filter="inativo" onclick="setFilter('inativo')">Inativos</button>
+            <button class="chip" data-filter="atrasado" onclick="setFilter('atrasado')">Atrasados</button>
+          </div>
+        </div>
+        <div class="row-list" id="student-list">
+          <div class="row" data-status="ativo" data-name="rafael costa" onclick="abrirFicha('Rafael Costa','RC')">
+            <div class="avatar">RC</div>
+            <div><div class="row-name">Rafael Costa</div><div class="row-sub">rafael.costa@email.com</div></div>
+            <div class="row-right"><span class="badge badge-ok">Em dia</span><i class="fas fa-chevron-right" style="color:var(--text-dim);"></i></div>
+          </div>
+          <div class="row" data-status="ativo" data-name="bianca moura" onclick="abrirFicha('Bianca Moura','BM')">
+            <div class="avatar">BM</div>
+            <div><div class="row-name">Bianca Moura</div><div class="row-sub">bianca.moura@email.com</div></div>
+            <div class="row-right"><span class="badge badge-ok">Em dia</span><i class="fas fa-chevron-right" style="color:var(--text-dim);"></i></div>
+          </div>
+          <div class="row" data-status="atrasado" data-name="diego azevedo" onclick="abrirFicha('Diego Azevedo','DA')">
+            <div class="avatar">DA</div>
+            <div><div class="row-name">Diego Azevedo</div><div class="row-sub">diego.azevedo@email.com</div></div>
+            <div class="row-right"><span class="badge badge-late">Atrasado</span><i class="fas fa-chevron-right" style="color:var(--text-dim);"></i></div>
+          </div>
+          <div class="row" data-status="ativo" data-name="thiago salles" onclick="abrirFicha('Thiago Salles','TS')">
+            <div class="avatar">TS</div>
+            <div><div class="row-name">Thiago Salles</div><div class="row-sub">thiago.salles@email.com</div></div>
+            <div class="row-right"><span class="badge badge-ok">Em dia</span><i class="fas fa-chevron-right" style="color:var(--text-dim);"></i></div>
+          </div>
+          <div class="row" data-status="inativo" data-name="larissa ferraz" onclick="abrirFicha('Larissa Ferraz','LF')">
+            <div class="avatar">LF</div>
+            <div><div class="row-name">Larissa Ferraz</div><div class="row-sub">larissa.ferraz@email.com</div></div>
+            <div class="row-right"><span class="badge badge-off">Inativo</span><i class="fas fa-chevron-right" style="color:var(--text-dim);"></i></div>
+          </div>
+          <div class="row" data-status="ativo" data-name="pedro almeida" onclick="abrirFicha('Pedro Almeida','PA')">
+            <div class="avatar">PA</div>
+            <div><div class="row-name">Pedro Almeida</div><div class="row-sub">pedro.almeida@email.com</div></div>
+            <div class="row-right"><span class="badge badge-warn">Pendente</span><i class="fas fa-chevron-right" style="color:var(--text-dim);"></i></div>
+          </div>
+        </div>
+        <p id="empty-state" style="display:none;text-align:center;padding:40px 0;color:var(--text-muted);font-size:13px;">Nenhum aluno encontrado.</p>
+      </div>
+    </div>
+
+    <!-- ===== FICHA DO ALUNO ===== -->
+    <div class="view" id="view-ficha">
+      <div class="page-body" style="padding-top:26px;">
+        <button class="back-link" onclick="goToView('alunos')">
+          <i class="fas fa-arrow-left"></i> Voltar para alunos
+        </button>
+        <div class="ficha-head">
+          <div class="ficha-avatar" id="ficha-avatar">RC</div>
+          <div>
+            <h2 style="font-size:20px;" id="ficha-nome">Rafael Costa</h2>
+            <span class="badge badge-ok" id="ficha-status" style="margin-top:6px;">Ativo</span>
+          </div>
+          <div class="ficha-actions">
+            <button class="btn btn-outline btn-sm" onclick="toggleEdit()" id="btn-editar">
+              <i class="fas fa-pen"></i> Editar dados
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="toggleAtivo()" id="btn-desativar">Desativar aluno</button>
+          </div>
+        </div>
+        <div class="grid grid-4" style="margin-top:26px;">
+          <div class="kpi-card">
+            <div class="kpi-label">Adesão ao treino</div>
+            <div class="kpi-value" id="kpi-adesao">86%</div>
+            <div class="kpi-delta up"><i class="fas fa-check"></i> 12 de 14 treinos</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Último treino</div>
+            <div class="kpi-value" style="font-size:19px;">Hoje</div>
+            <div class="kpi-delta">08:40 · Peito/Tríceps</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Peso atual vs. inicial</div>
+            <div class="kpi-value">82,4 kg</div>
+            <div class="kpi-delta down"><i class="fas fa-arrow-down"></i> -3,1 kg</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Pagamento</div>
+            <div class="kpi-value" style="font-size:19px;" id="ficha-pgto-status">Em dia</div>
+            <div class="kpi-delta">próx. venc. 05/09</div>
+          </div>
+        </div>
+        <div style="margin-top:30px;">
+          <div class="tabs">
+            <button class="tab-btn active" data-tab="dados" onclick="setTab('dados')">Dados</button>
+            <button class="tab-btn" data-tab="treino" onclick="setTab('treino')">Treino</button>
+            <button class="tab-btn" data-tab="evolucao" onclick="setTab('evolucao')">Evolução</button>
+            <button class="tab-btn" data-tab="financeiro" onclick="setTab('financeiro')">Financeiro</button>
+          </div>
+          <!-- DADOS -->
+          <div class="tab-panel active" id="tab-dados">
+            <div class="grid grid-4" style="gap:16px;">
+              <div class="field"><label>Nome completo</label><input type="text" value="Rafael Costa" disabled></div>
+              <div class="field"><label>E-mail</label><input type="text" value="rafael.costa@email.com" disabled></div>
+              <div class="field"><label>Telefone</label><input type="text" value="(31) 98800-1122" disabled></div>
+              <div class="field"><label>Data de nascimento</label><input type="text" value="14/03/1994" disabled></div>
+              <div class="field"><label>Altura</label><input type="text" value="1,79 m" disabled></div>
+              <div class="field"><label>Peso inicial</label><input type="text" value="85,5 kg" disabled></div>
+              <div class="field"><label>Objetivo</label><input type="text" value="Hipertrofia" disabled></div>
+              <div class="field"><label>Início</label><input type="text" value="12/02/2026" disabled></div>
+            </div>
+            <div class="field" style="margin-top:16px;">
+              <label>Observações</label>
+              <textarea rows="2" disabled style="resize:vertical;">Histórico de dor lombar leve — evitar agachamento livre com carga alta.</textarea>
+            </div>
+            <div style="margin-top:16px;">
+              <div class="section-title" style="font-size:12px;">Linha do tempo — Anotações</div>
+              <div class="timeline-item">
+                <div class="date"><i class="far fa-clock"></i> 14/08/2026 09:30</div>
+                <div class="note">Aluno melhorou a execução no supino. Aumentar carga na próxima semana.</div>
+              </div>
+              <div class="timeline-item">
+                <div class="date"><i class="far fa-clock"></i> 10/08/2026 16:15</div>
+                <div class="note">Relatou dor no ombro direito. Recomendado exercícios de mobilidade.</div>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:10px;">
+                <input type="text" id="nova-anotacao" placeholder="Nova anotação..." style="flex:1;background:var(--surface-2);border:1px solid var(--border);color:var(--text);padding:10px 12px;font-family:'Inter',sans-serif;font-size:13.5px;outline:none;">
+                <button class="btn btn-primary btn-sm" onclick="adicionarAnotacao()"><i class="fas fa-plus"></i> Adicionar</button>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-sm" style="display:none;margin-top:16px;" id="btn-salvar" onclick="saveEdit()">Salvar alterações</button>
+          </div>
+          <!-- TREINO -->
+          <div class="tab-panel" id="tab-treino">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+              <div class="eyebrow">Treino ativo · Push/Pull/Legs</div>
+              <div style="display:flex;gap:10px;">
+                <button class="btn btn-outline btn-sm" onclick="showToast('Treino atual aberto para edição')"><i class="fas fa-edit"></i> Editar</button>
+                <button class="btn btn-primary btn-sm" onclick="showToast('Novo treino criado')"><i class="fas fa-plus"></i> Novo</button>
+              </div>
+            </div>
+            <div id="workout-active-list">
+              <div class="workout-row sortable-item" data-id="1">
+                <div><div class="row-name"><i class="fas fa-grip-vertical" style="color:var(--text-dim);margin-right:8px;cursor:grab;"></i> A · Peito, Ombro e Tríceps</div><div class="row-sub">6 exercícios · 1h05</div></div>
+                <span class="badge badge-ok">Ativo</span>
+              </div>
+              <div class="workout-row sortable-item" data-id="2">
+                <div><div class="row-name"><i class="fas fa-grip-vertical" style="color:var(--text-dim);margin-right:8px;cursor:grab;"></i> B · Costas e Bíceps</div><div class="row-sub">5 exercícios · 55min</div></div>
+                <span class="badge badge-ok">Ativo</span>
+              </div>
+              <div class="workout-row sortable-item" data-id="3">
+                <div><div class="row-name"><i class="fas fa-grip-vertical" style="color:var(--text-dim);margin-right:8px;cursor:grab;"></i> C · Pernas e Core</div><div class="row-sub">7 exercícios · 1h10</div></div>
+                <span class="badge badge-ok">Ativo</span>
+              </div>
+            </div>
+            <div class="section-title" style="margin-top:22px;">Histórico de treinos</div>
+            <div class="workout-row"><div><div class="row-name">Bloco Hipertrofia — Fev a Mai/26</div><div class="row-sub">12 semanas · concluído</div></div><span class="badge badge-off">Encerrado</span></div>
+            <div style="margin-top:12px;font-size:12px;color:var(--text-muted);">
+              <i class="fas fa-info-circle"></i> Arraste os treinos para reordenar (drag & drop)
+            </div>
+          </div>
+          <!-- EVOLUÇÃO -->
+          <div class="tab-panel" id="tab-evolucao">
+            <div class="grid grid-2">
+              <div class="card">
+                <div class="section-title">Peso corporal (kg)</div>
+                <div class="evo-chart">
+                  <div class="evo-bar" style="height:92%;"></div>
+                  <div class="evo-bar" style="height:88%;"></div>
+                  <div class="evo-bar" style="height:84%;"></div>
+                  <div class="evo-bar" style="height:80%;"></div>
+                  <div class="evo-bar" style="height:76%;"></div>
+                  <div class="evo-bar" style="height:72%;"></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="section-title">Carga total (supino)</div>
+                <div class="evo-chart">
+                  <div class="evo-bar" style="height:40%;"></div>
+                  <div class="evo-bar" style="height:52%;"></div>
+                  <div class="evo-bar" style="height:58%;"></div>
+                  <div class="evo-bar" style="height:70%;"></div>
+                  <div class="evo-bar" style="height:82%;"></div>
+                  <div class="evo-bar" style="height:96%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- FINANCEIRO -->
+          <div class="tab-panel" id="tab-financeiro">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+              <div>
+                <div class="eyebrow">Status atual</div>
+                <span class="badge badge-ok" id="pgto-badge" style="margin-top:6px;">Em dia</span>
+              </div>
+              <button class="btn btn-success btn-sm" id="btn-marcar-pago" onclick="marcarPagoFicha()"><i class="fas fa-check"></i> Marcar como pago</button>
+            </div>
+            <div class="pix-box" style="margin-bottom:16px;">
+              <span style="font-weight:600;"><i class="fas fa-pix"></i> Chave PIX:</span>
+              <span class="pix-key" id="pix-key">pix@jftraining.com</span>
+              <button class="btn btn-outline btn-sm" onclick="copiarPix()"><i class="fas fa-copy"></i> Copiar</button>
+            </div>
+            <div class="card">
+              <div class="pill-row"><span>Agosto/2026</span><span class="mono">R$ 280,00 — pago em 03/08</span></div>
+              <div class="pill-row"><span>Julho/2026</span><span class="mono">R$ 280,00 — pago em 04/07</span></div>
+              <div class="pill-row"><span>Junho/2026</span><span class="mono">R$ 280,00 — pago em 02/06</span></div>
+              <div class="pill-row"><span>Maio/2026</span><span class="mono">R$ 280,00 — pago em 05/05</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== FINANCEIRO ===== -->
+    <div class="view" id="view-financeiro">
+      <div class="page-head">
+        <div><span class="eyebrow">Panorama geral</span><h1 class="page-title">Financeiro</h1></div>
+      </div>
+      <div class="page-body">
+        <div class="grid grid-4">
+          <div class="kpi-card">
+            <div class="kpi-label">Faturamento do mês</div>
+            <div class="kpi-value" id="fat-mes">R$ 12.480</div>
+            <div class="kpi-delta up"><i class="fas fa-arrow-up"></i> 8% vs. mês ant.</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Pagamentos em atraso</div>
+            <div class="kpi-value" id="qtd-atraso">4</div>
+            <div class="kpi-delta down" id="valor-atraso">R$ 1.120 pendentes</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Pagamentos pendentes</div>
+            <div class="kpi-value">3</div>
+            <div class="kpi-delta">vencem nos próx. 5 dias</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Ticket médio</div>
+            <div class="kpi-value">R$ 297</div>
+            <div class="kpi-delta up"><i class="fas fa-arrow-up"></i> 3% vs. mês ant.</div>
+          </div>
+        </div>
+        <div style="height:30px;"></div>
+        <div class="fin-toolbar">
+          <div class="chips" id="filter-chips-fin">
+            <button class="chip active" data-filter="todos" onclick="setFilterFin('todos')">Todos</button>
+            <button class="chip" data-filter="em-dia" onclick="setFilterFin('em-dia')">Em dia</button>
+            <button class="chip" data-filter="pendente" onclick="setFilterFin('pendente')">Pendentes</button>
+            <button class="chip" data-filter="atrasado" onclick="setFilterFin('atrasado')">Atrasados</button>
+          </div>
+          <div class="period-select">
+            <span class="eyebrow" style="white-space:nowrap;">Período</span>
+            <select onchange="showToast('Período atualizado: ' + this.value)" style="background:var(--surface-2);border:1px solid var(--border);color:var(--text);padding:8px 12px;font-family:'Inter',sans-serif;">
+              <option>Agosto / 2026</option>
+              <option>Julho / 2026</option>
+              <option>Junho / 2026</option>
+              <option>Ano de 2026</option>
+            </select>
+          </div>
+        </div>
+        <div class="row-list pay-table" id="pay-list">
+          <div class="row" data-status="em-dia">
+            <div class="avatar">RC</div>
+            <div><div class="row-name">Rafael Costa</div><div class="row-sub mono">R$ 280,00 · venc. 05/09</div></div>
+            <div class="row-right"><span class="badge badge-ok">Em dia</span><button class="btn btn-outline btn-sm" disabled>Pago</button></div>
+          </div>
+          <div class="row" data-status="em-dia">
+            <div class="avatar">BM</div>
+            <div><div class="row-name">Bianca Moura</div><div class="row-sub mono">R$ 320,00 · venc. 08/09</div></div>
+            <div class="row-right"><span class="badge badge-ok">Em dia</span><button class="btn btn-outline btn-sm" disabled>Pago</button></div>
+          </div>
+          <div class="row" data-status="atrasado">
+            <div class="avatar">DA</div>
+            <div><div class="row-name">Diego Azevedo</div><div class="row-sub mono">R$ 280,00 · venceu 12/08</div></div>
+            <div class="row-right"><span class="badge badge-late">Atrasado</span><button class="btn btn-primary btn-sm" onclick="marcarPagoFin(this,'DA',280)">Marcar pago</button></div>
+          </div>
+          <div class="row" data-status="pendente">
+            <div class="avatar">PA</div>
+            <div><div class="row-name">Pedro Almeida</div><div class="row-sub mono">R$ 280,00 · venc. 26/08</div></div>
+            <div class="row-right"><span class="badge badge-warn">Pendente</span><button class="btn btn-primary btn-sm" onclick="marcarPagoFin(this,'PA',280)">Marcar pago</button></div>
+          </div>
+          <div class="row" data-status="atrasado">
+            <div class="avatar">MS</div>
+            <div><div class="row-name">Mariana Souza</div><div class="row-sub mono">R$ 320,00 · venceu 09/08</div></div>
+            <div class="row-right"><span class="badge badge-late">Atrasado</span><button class="btn btn-primary btn-sm" onclick="marcarPagoFin(this,'MS',320)">Marcar pago</button></div>
+          </div>
+        </div>
+        <p id="empty-state-fin" style="display:none;text-align:center;padding:40px 0;color:var(--text-muted);font-size:13px;">Nenhum pagamento encontrado.</p>
+        <div style="margin-top:20px;">
+          <button class="btn btn-outline" onclick="showToast('Relatório mensal gerado (mock)')"><i class="fas fa-file-pdf"></i> Gerar relatório mensal</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== CONFIGURAÇÕES ===== -->
+    <div class="view" id="view-configuracoes">
+      <div class="page-head">
+        <div><span class="eyebrow">Ajustes</span><h1 class="page-title">Configurações</h1></div>
+      </div>
+      <div class="page-body">
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="section-title">Dados do Personal</div>
+            <div class="field" style="margin-bottom:12px;"><label>Nome</label><input type="text" value="João Ferreira"></div>
+            <div class="field" style="margin-bottom:12px;"><label>E-mail</label><input type="text" value="personal@jftraining.com"></div>
+            <div class="field" style="margin-bottom:12px;"><label>Bio</label><textarea rows="2">Personal Trainer especializado em hipertrofia e performance.</textarea></div>
+            <button class="btn btn-primary btn-sm" onclick="showToast('Configurações salvas (mock)')"><i class="fas fa-save"></i> Salvar</button>
+          </div>
+          <div class="card">
+            <div class="section-title">Marca / Estúdio</div>
+            <div class="field" style="margin-bottom:12px;"><label>Nome da marca</label><input type="text" value="JF Training"></div>
+            <div class="field" style="margin-bottom:12px;"><label>Logo</label>
+              <div style="display:flex;gap:10px;align-items:center;">
+                <div class="brand-mark" style="width:60px;height:60px;font-size:24px;">JF</div>
+                <button class="btn btn-outline btn-sm" onclick="showToast('Upload de logo (mock)')"><i class="fas fa-upload"></i> Alterar</button>
+              </div>
+            </div>
+            <div class="field" style="margin-bottom:12px;"><label>Chave PIX</label><input type="text" value="pix@jftraining.com"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<nav class="mobile-tabbar">
+  <div class="mobile-tabbar-inner">
+    <button class="mobile-tab active" data-view="overview" onclick="goToView('overview')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+      Overview
+    </button>
+    <button class="mobile-tab" data-view="alunos" onclick="goToView('alunos')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6"/><circle cx="18" cy="9" r="2.4"/><path d="M15.5 14c2.9.2 5 2.3 5 6"/></svg>
+      Alunos
+    </button>
+    <button class="mobile-tab" data-view="financeiro" onclick="goToView('financeiro')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="5" width="19" height="14"/><circle cx="12" cy="12" r="3.2"/><path d="M2.5 9h2M19.5 9h2M2.5 15h2M19.5 15h2"/></svg>
+      Financeiro
+    </button>
+    <button class="mobile-tab" data-view="configuracoes" onclick="goToView('configuracoes')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1-1.6 1.7 1.7 0 00-1.9.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1 1.7 1.7 0 00-.3-1.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>
+      Ajustes
+    </button>
+  </div>
+</nav>
+</div>
+
+<script>
+// ===== TEMA =====
+document.querySelectorAll('[data-theme-toggle]').forEach(el=>{
+  el.addEventListener('click', ()=>{
+    const root = document.documentElement;
+    const cur = root.getAttribute('data-theme');
+    root.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+  });
+});
+
+// ===== TOAST =====
+function showToast(msg){
+  let wrap = document.querySelector('.toast-wrap');
+  if(!wrap){ wrap = document.createElement('div'); wrap.className = 'toast-wrap'; document.body.appendChild(wrap); }
+  const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
+  wrap.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .25s'; setTimeout(()=>t.remove(),250); }, 2600);
+}
+
+// ===== LOGIN =====
+function doLoginPersonal(){
+  const email = document.getElementById('login-email').value;
+  const senha = document.getElementById('login-senha').value;
+  if(email === 'personal@jftraining.com' && senha === 'teste123'){
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app-personal').style.display = 'block';
+    showToast('Bem-vindo, João!');
+    // init drag & drop
+    setTimeout(initSortable, 300);
+  } else {
+    showToast('❌ E-mail ou senha incorretos');
+  }
+}
+
+function gerarSenhaMock(){
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let senha = '';
+  for(let i=0; i<8; i++) senha += chars.charAt(Math.floor(Math.random() * chars.length));
+  showToast('🔑 Senha gerada: ' + senha + ' (copie para o aluno)');
+}
+
+function doLogout(){
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app-personal').style.display = 'none';
+  showToast('Sessão encerrada');
+}
+
+// ===== NAVEGAÇÃO =====
+function goToView(view){
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + view).classList.add('active');
+  document.querySelectorAll('.nav-item, .mobile-tab').forEach(el => {
+    el.classList.toggle('active', el.dataset.view === view);
+  });
+}
+
+// ===== ALUNOS =====
+let ativoAluno = true;
+let editando = false;
+let currentAluno = 'Rafael Costa';
+let currentIniciais = 'RC';
+
+function abrirFicha(nome, iniciais){
+  currentAluno = nome;
+  currentIniciais = iniciais;
+  document.getElementById('ficha-nome').textContent = nome;
+  document.getElementById('ficha-avatar').textContent = iniciais;
+  goToView('ficha');
+  // reset edit state
+  if(editando) toggleEdit();
+}
+
+function toggleAtivo(){
+  ativoAluno = !ativoAluno;
+  const badge = document.getElementById('ficha-status');
+  const btn = document.getElementById('btn-desativar');
+  if(ativoAluno){ badge.textContent='Ativo'; badge.className='badge badge-ok'; btn.textContent='Desativar aluno'; showToast('Aluno reativado'); }
+  else{ badge.textContent='Inativo'; badge.className='badge badge-off'; btn.textContent='Reativar aluno'; showToast('Aluno desativado'); }
+}
+
+function toggleEdit(){
+  editando = !editando;
+  document.querySelectorAll('#tab-dados input, #tab-dados textarea').forEach(el => el.disabled = !editando);
+  document.getElementById('btn-salvar').style.display = editando ? 'inline-flex' : 'none';
+  document.getElementById('btn-editar').innerHTML = editando
+    ? '<i class="fas fa-times"></i> Cancelar'
+    : '<i class="fas fa-pen"></i> Editar dados';
+}
+
+function saveEdit(){
+  toggleEdit();
+  showToast('Dados atualizados');
+}
+
+function setTab(t){
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+}
+
+// ===== FILTROS =====
+function setFilter(f){
+  document.querySelectorAll('#filter-chips .chip').forEach(c => c.classList.toggle('active', c.dataset.filter === f));
+  filterList();
+}
+function filterList(){
+  const active = document.querySelector('#filter-chips .chip.active').dataset.filter;
+  const q = document.getElementById('search-input').value.toLowerCase().trim();
+  let visible = 0;
+  document.querySelectorAll('#student-list .row').forEach(row => {
+    const matchStatus = active === 'todos' || row.dataset.status === active;
+    const matchSearch = row.dataset.name.includes(q);
+    const show = matchStatus && matchSearch;
+    row.style.display = show ? 'flex' : 'none';
+    if(show) visible++;
+  });
+  document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
+}
+
+// ===== ANOTAÇÕES =====
+function adicionarAnotacao(){
+  const input = document.getElementById('nova-anotacao');
+  const texto = input.value.trim();
+  if(!texto){ showToast('Digite uma anotação'); return; }
+  const now = new Date();
+  const data = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+  const container = document.querySelector('.timeline-item').parentNode;
+  const div = document.createElement('div');
+  div.className = 'timeline-item';
+  div.innerHTML = `<div class="date"><i class="far fa-clock"></i> ${data}</div><div class="note">${texto}</div>`;
+  container.insertBefore(div, container.lastElementChild);
+  input.value = '';
+  showToast('Anotação adicionada');
+}
+
+// ===== DRAG & DROP (SORTABLE) =====
+let sortableInstance = null;
+function initSortable(){
+  const el = document.getElementById('workout-active-list');
+  if(!el) return;
+  if(sortableInstance) sortableInstance.destroy();
+  sortableInstance = Sortable.create(el, {
+    animation: 150,
+    ghostClass: 'sortable-ghost',
+    handle: '.sortable-item',
+    onEnd: function(evt){
+      showToast('Ordem dos treinos atualizada');
+    }
+  });
+}
+
+// ===== PIX =====
+function copiarPix(){
+  const chave = document.getElementById('pix-key').textContent;
+  navigator.clipboard?.writeText(chave).then(() => {
+    showToast('Chave PIX copiada: ' + chave);
+  }).catch(() => {
+    // fallback
+    const input = document.createElement('input');
+    input.value = chave;
+    document.body.appendChild(input);
+    input.select();
+    document.execCommand('copy');
+    input.remove();
+    showToast('Chave PIX copiada: ' + chave);
+  });
+}
+
+// ===== PAGAMENTO FICHA =====
+function marcarPagoFicha(){
+  const badge = document.getElementById('pgto-badge');
+  const btn = document.getElementById('btn-marcar-pago');
+  const status = document.getElementById('ficha-pgto-status');
+  badge.textContent = 'Em dia';
+  badge.className = 'badge badge-ok';
+  status.textContent = 'Em dia';
+  btn.disabled = true;
+  btn.textContent = 'Pagamento confirmado';
+  showToast('Pagamento marcado como pago');
+}
+
+// ===== FINANCEIRO =====
+function setFilterFin(f){
+  document.querySelectorAll('#filter-chips-fin .chip').forEach(c => c.classList.toggle('active', c.dataset.filter === f));
+  let visible = 0;
+  document.querySelectorAll('#pay-list .row').forEach(row => {
+    const show = f === 'todos' || row.dataset.status === f;
+    row.style.display = show ? 'flex' : 'none';
+    if(show) visible++;
+  });
+  document.getElementById('empty-state-fin').style.display = visible === 0 ? 'block' : 'none';
+}
+
+function marcarPagoFin(btn, iniciais, valor){
+  const row = btn.closest('.row');
+  row.dataset.status = 'em-dia';
+  row.querySelector('.badge').outerHTML = '<span class="badge badge-ok">Em dia</span>';
+  btn.outerHTML = '<button class="btn btn-outline btn-sm" disabled>Pago</button>';
+  showToast('Pagamento de ' + iniciais + ' confirmado — R$ ' + valor.toFixed(2).replace('.',','));
+  // update KPIs
+  const qtdEl = document.getElementById('qtd-atraso');
+  const atrasados = document.querySelectorAll('#pay-list .row[data-status="atrasado"]').length;
+  qtdEl.textContent = atrasados;
+  const fatEl = document.getElementById('fat-mes');
+  const atual = parseInt(fatEl.textContent.replace(/\D/g,''));
+  fatEl.textContent = 'R$ ' + (atual + valor).toLocaleString('pt-BR');
+  const valorAtraso = document.getElementById('valor-atraso');
+  let atual2 = parseInt(valorAtraso.textContent.replace(/\D/g,'')) || 0;
+  const novoValor = Math.max(atual2 - valor, 0);
+  valorAtraso.textContent = 'R$ ' + novoValor.toLocaleString('pt-BR') + ' pendentes';
+  const active = document.querySelector('#filter-chips-fin .chip.active').dataset.filter;
+  setFilterFin(active);
+}
+
+// ===== KEYBOARD LOGIN =====
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none'){
+    doLoginPersonal();
+  }
+});
+
+// ===== INICIALIZAÇÃO =====
+// Verifica se já está logado (mock)
+document.getElementById('login-screen').style.display = 'flex';
+document.getElementById('app-personal').style.display = 'none';
+
+// Inicializar Sortable quando a ficha for aberta
+document.querySelector('[data-tab="treino"]').addEventListener('click', () => {
+  setTimeout(initSortable, 100);
+});
+</script>
+</body>
+</html>
